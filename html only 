@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>For the Soul Who Brightens My World</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: #fdfbf9;
+            color: #5a4a5a;
+            line-height: 1.9;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Subtle Glow Background */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background: radial-gradient(circle at 30% 40%, rgba(248, 194, 208, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 60%, rgba(219, 196, 224, 0.12) 0%, transparent 45%);
+        }
+
+        /* Scroll Progress Indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(to right, #d46aa6, #b88fc2);
+            z-index: 1000;
+            transition: width 0.05s ease;
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4.5rem;
+            color: #c75a94;
+            max-width: 900px;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .hero p {
+            font-size: 1.6rem;
+            color: #8a758a;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 2s ease, transform 2s ease;
+        }
+
+        .hero.active h1 {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hero.active p {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.6s;
+        }
+
+        /* Poem Section */
+        .poem-section {
+            padding: 8rem 10%;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #fffaf5;
+        }
+
+        .poem {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2rem;
+            color: #6d507a;
+            line-height: 2.5;
+            max-width: 800px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .poem.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Cake Section */
+        .cake-section {
+            padding: 8rem 2rem;
+            text-align: center;
+            background: #f8f4fb;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cake-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: #b88fc2;
+            margin-bottom: 3rem;
+            opacity: 0;
+        }
+
+        .cake-container {
+            position: relative;
+            width: 220px;
+            height: 160px;
+            margin: 0 auto;
+        }
+
+        .cake {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .cake-base {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 90px;
+            background: #fff0f5;
+            border-radius: 30px 30px 15px 15px;
+            border: 1px solid #f8d8e8;
+        }
+
+        .cake-layer {
+            position: absolute;
+            bottom: 90px;
+            width: 180px;
+            height: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffe6ee;
+            border-radius: 20px;
+            border: 1px solid #f8d8e8;
+        }
+
+        .candle {
+            position: absolute;
+            width: 8px;
+            height: 35px;
+            bottom: 125px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border-radius: 4px;
+            border: 1px solid #f8d8e8;
+        }
+
+        .flame {
+            position: absolute;
+            width: 14px;
+            height: 20px;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffcc80;
+            border-radius: 50% 50% 30% 30%;
+            opacity: 0;
+            box-shadow: 0 0 20px 8px rgba(255, 200, 100, 0.8);
+            animation: flicker 0.7s infinite alternate;
+            z-index: 10;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.6; transform: translateX(-50%) scale(1); box-shadow: 0 0 20px 8px rgba(255, 200, 100, 0.6); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.15); box-shadow: 0 0 25px 10px rgba(255, 200, 100, 0.9); }
+            100% { opacity: 0.5; transform: translateX(-50%) scale(0.9); box-shadow: 0 0 18px 6px rgba(255, 200, 100, 0.5); }
+        }
+
+        .wish-btn {
+            margin-top: 3rem;
+            padding: 1rem 2.5rem;
+            background: #c75a94;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 20px rgba(199, 90, 148, 0.3);
+            opacity: 0;
+        }
+
+        .wish-btn:hover {
+            background: #b34e82;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(199, 90, 148, 0.4);
+        }
+
+        /* Hidden Message */
+        .heart-icon {
+            font-size: 2.5rem;
+            color: #e98b9b;
+            margin: 2rem 0;
+            cursor: pointer;
+            opacity: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .heart-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .secret-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #a55c86;
+            max-width: 600px;
+            margin: 1rem auto 0;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+        }
+
+        /* Memory Section */
+        .memory-section {
+            padding: 8rem 5%;
+            text-align: center;
+            background: #fdfbf9;
+            position: relative;
+        }
+
+        .memory-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: #c75a94;
+            margin-bottom: 3rem;
+            opacity: 0;
+        }
+
+        .polaroid-stack {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .polaroid {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin: 2rem auto;
+            max-width: 300px;
+            transform: rotate(-2deg);
+            opacity: 0;
+            transition: all 1s ease;
+        }
+
+        .polaroid:nth-child(2) {
+            transform: rotate(1deg);
+        }
+
+        .polaroid:nth-child(3) {
+            transform: rotate(-1deg);
+        }
+
+        .polaroid img {
+            width: 100%;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .polaroid .caption {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: #7a667a;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .polaroid.visible {
+            opacity: 1;
+            transform: translateY(0) rotate(var(--rotate));
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            font-size: 1.2rem;
+            pointer-events: none;
+            opacity: 0.6;
+            z-index: -1;
+        }
+
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 16px;
+            border-radius: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #c75a94;
+            transition: transform 0.3s ease;
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            color: #9a8a9a;
+            font-size: 1.1rem;
+            background: #fdfbf9;
+        }
+
+        footer .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #c75a94;
+            margin-top: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .hero p {
+                font-size: 1.3rem;
+            }
+            .poem {
+                font-size: 1.8rem;
+            }
+            .cake-title,
+            .memory-title {
+                font-size: 2.8rem;
+            }
+            .polaroid-stack {
+                max-width: 320px;
+            }
+            .polaroid {
+                max-width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Glow -->
+    <div class="bg-glow"></div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Floating Particles -->
+    <div id="particles"></div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <h1>For the soul who brightens every version of my world…</h1>
+        <p>Happy Birthday, {{her_name}} — the one who makes my heart feel like home.</p>
+    </section>
+
+    <!-- Poem Section -->
+    <section class="poem-section">
+        <div class="poem" id="poem1">
+            I still remember the first time<br>
+            your laughter filled a room I thought was quiet forever.<br>
+            You didn’t just walk in —<br>
+            you brought light, soft and certain,<br>
+            like dawn after a long winter.<br><br>
+
+            {{personal_poem}}<br><br>
+
+            Today, on your {{birthday_date}},<br>
+            I celebrate not just your birth,<br>
+            but every breath that led you to me.<br>
+            I love you not in spite of time,<br>
+            but because of all the moments we’ve stolen from it.
+        </div>
+    </section>
+
+    <!-- Cake Section -->
+    <section class="cake-section" id="cakeSection">
+        <h2 class="cake-title">Make a Wish</h2>
+        <div class="cake-container">
+            <div class="cake">
+                <div class="cake-base"></div>
+                <div class="cake-layer"></div>
+                <div class="candle"></div>
+                <div class="flame" id="flame"></div>
+            </div>
+        </div>
+        <button class="wish-btn" id="makeWish">Make a Wish</button>
+        <div class="heart-icon" id="heartIcon">❤️</div>
+        <div class="secret-message" id="secretMessage">{{secret_message}}</div>
+    </section>
+
+    <!-- Memory Section -->
+    <section class="memory-section" id="memorySection">
+        <h2 class="memory-title">Memory Lane</h2>
+        <div class="polaroid-stack">
+            <div class="polaroid" style="--rotate: -3deg;">
+                <img src="https://placehold.co/300x300/ffd1dc/5a4a5a?text=Your+Laugh" alt="Your Laugh">
+                <div class="caption">Your laugh — the sound I’d save if I could.</div>
+            </div>
+            <div class="polaroid" style="--rotate: 2deg;">
+                <img src="https://placehold.co/300x300/e6bbff/5a4a5a?text=That+Rainy+Night" alt="Rainy Night">
+                <div class="caption">That rainy night we danced under the awning.</div>
+            </div>
+            <div class="polaroid" style="--rotate: -1deg;">
+                <img src="https://placehold.co/300x300/f5e6d3/5a4a5a?text=When+I+Knew" alt="When I Knew">
+                <div class="caption">The moment I knew — you were my always.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Music Player -->
+    <div class="music-player">
+        <button class="music-btn" id="musicToggle">🔇</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>This was never just code. It was a piece of my heart.</p>
+        <div class="signature">– R for {{her_name}}</div>
+    </footer>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particles = ['❤️', '✨', '🌸', '💫', '🌷', '💖'];
+            const container = document.getElementById('particles');
+            
+            for (let i = 0; i < 12; i++) {
+                const el = document.createElement('div');
+                el.className = 'particle';
+                el.textContent = particles[Math.floor(Math.random() * particles.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.top = Math.random() * 100 + 'vh';
+                el.style.opacity = Math.random() * 0.6 + 0.3;
+                el.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                el.style.animation = `float ${Math.random() * 10 + 10}s linear infinite`;
+                container.appendChild(el);
+            }
+        }
+
+        // Scroll progress bar
+        function updateScrollProgress() {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.body.offsetHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('scrollProgress').style.transform = `scaleX(${progress / 100})`;
+        }
+
+        // Reveal sections on scroll
+        function revealOnScroll() {
+            const sections = document.querySelectorAll('.poem, .polaroid');
+            sections.forEach(section => {
+                const position = section.getBoundingClientRect();
+                if (position.top < window.innerHeight - 100 && !section.classList.contains('visible')) {
+                    section.classList.add('visible');
+                }
+            });
+        }
+
+        // Cake candle animation
+        document.getElementById('makeWish').addEventListener('click', function() {
+            const flame = document.getElementById('flame');
+            flame.style.opacity = 1;
+            this.textContent = "✨ Wish Made";
+            this.disabled = true;
+            
+            // Trigger message fade-in
+            setTimeout(() => {
+                document.querySelector('.heart-icon').style.opacity = 1;
+            }, 800);
+        });
+
+        // Reveal secret message
+        document.getElementById('heartIcon').addEventListener('click', function() {
+            const message = document.getElementById('secretMessage');
+            message.style.opacity = 1;
+            this.textContent = "💌 Revealed";
+        });
+
+        // Music player
+        let isPlaying = false;
+        const musicBtn = document.getElementById('musicToggle');
+        const audio = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-soft-guitar-music-601.mp3");
+        audio.loop = true;
+
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.textContent = '🔇';
+                isPlaying = false;
+            } else {
+                audio.play().catch(e => console.log("Audio play failed:", e));
+                musicBtn.textContent = '🎶';
+                isPlaying = true;
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            createParticles();
+            
+            // Animate hero
+            setTimeout(() => {
+                document.getElementById('hero').classList.add('active');
+            }, 500);
+
+            // Replace placeholders
+            document.body.innerHTML = document.body.innerHTML
+                .replace(/\{\{her_name\}\}/g, 'Luna')
+                .replace(/\{\{his_name\}\}/g, 'Orion')
+                .replace(/\{\{personal_poem\}\}/g, 
+                    'You are the quiet between my heartbeats,\nthe pause where everything makes sense.')
+                .replace(/\{\{birthday_date\}\}/g, 'October 12th')
+                .replace(/\{\{years_together\}\}/g, '3')
+                .replace(/\{\{secret_message\}\}/g, 
+                    'I would fall in love with you in every lifetime. This one is just my favorite so far.');
+        });
+
+        // Scroll events
+        window.addEventListener('scroll', () => {
+            updateScrollProgress();
+            revealOnScroll();
+        });
+
+        // Initial check
+        window.addEventListener('load', revealOnScroll);
+    </script>
+</body>
+</html>
